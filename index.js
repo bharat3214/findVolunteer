@@ -94,10 +94,21 @@ app.post('/signup', async (req, res) => {
   try {
     const { name, email, password, role, skills, description, location } = req.body;
     
+    // Validate required fields
+    if (!name || !email || !password || !role) {
+      return res.status(400).render('signup', { 
+        error: 'All required fields must be filled', 
+        formData: { name, email, role, skills, description, location } 
+      });
+    }
+    
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).render('signup', { error: 'Email already in use' });
+      return res.status(400).render('signup', { 
+        error: 'Email already in use',
+        formData: { name, email, role, skills, description, location } 
+      });
     }
     
     // Hash password
@@ -114,7 +125,9 @@ app.post('/signup', async (req, res) => {
       location
     });
     
+    console.log('Attempting to save user:', { name, email, role });
     await user.save();
+    console.log('User saved successfully with ID:', user._id);
     
     // Generate token
     const token = jwt.sign(
@@ -131,8 +144,14 @@ app.post('/signup', async (req, res) => {
       res.redirect('/organization/dashboard');
     }
   } catch (err) {
-    console.error('Signup error:', err);
-    res.status(500).render('signup', { error: 'Error creating account' });
+    console.error('Signup error details:', err);
+    // More descriptive error message
+    const errorMessage = err.code === 11000 ? 'Email already exists' : 
+                        (err.message || 'Error creating account');
+    res.status(500).render('signup', { 
+      error: errorMessage,
+      formData: req.body  // Return form data to repopulate fields
+    });
   }
 });
 
