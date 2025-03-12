@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Applicants - Volunteer Connect</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Volunteer Connect</h1>
+      <nav>
+        <ul>
+          <li><a href="/organization/dashboard">Dashboard</a></li>
+          <li><a href="/organization/create-opportunity">Create Opportunity</a></li>
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="dashboard">
+    <div class="container">
+      <div class="opportunity-header">
+        <h2><%= opportunity.title %> - Applicants</h2>
+        <a href="/organization/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+      </div>
+
+      <div class="opportunity-details-card">
+        <h3>Opportunity Details</h3>
+        <p class="description"><%= opportunity.description %></p>
+        <div class="details-grid">
+          <div class="detail-item">
+            <strong>Location:</strong> <%= opportunity.location || 'Remote' %>
+          </div>
+          <% if (opportunity.startDate) { %>
+          <div class="detail-item">
+            <strong>Start Date:</strong> <%= new Date(opportunity.startDate).toLocaleDateString() %>
+          </div>
+          <% } %>
+          <% if (opportunity.endDate) { %>
+          <div class="detail-item">
+            <strong>End Date:</strong> <%= new Date(opportunity.endDate).toLocaleDateString() %>
+          </div>
+          <% } %>
+          <% if (opportunity.requirements && opportunity.requirements.length > 0) { %>
+          <div class="detail-item">
+            <strong>Requirements:</strong> <%= opportunity.requirements.join(', ') %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <div class="applicants-section">
+        <h3>Applicants (<%= applicants.length %>)</h3>
+        <% if (applicants.length === 0) { %>
+          <p class="empty-state">No applicants yet for this opportunity.</p>
+        <% } else { %>
+          <div class="applicants-list">
+            <% applicants.forEach(applicant => { %>
+              <div class="applicant-card">
+                <div class="applicant-info">
+                  <h4><%= applicant.name %></h4>
+                  <p class="email"><%= applicant.email %></p>
+                  <% if (applicant.location) { %>
+                    <p class="location"><i class="fa fa-map-marker"></i> <%= applicant.location %></p>
+                  <% } %>
+                </div>
+                <div class="applicant-details">
+                  <% if (applicant.skills && applicant.skills.length > 0) { %>
+                    <div class="skills">
+                      <strong>Skills:</strong>
+                      <div class="skill-tags">
+                        <% applicant.skills.forEach(skill => { %>
+                          <span class="skill-tag"><%= skill %></span>
+                        <% }); %>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+                <div class="applicant-actions">
+                  <button class="btn btn-primary contact-btn" data-email="<%= applicant.email %>">Contact</button>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 Volunteer Connect. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Simple contact functionality
+    document.querySelectorAll('.contact-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const email = this.getAttribute('data-email');
+        window.location.href = `mailto:${email}?subject=Regarding your volunteer application`;
+      });
+    });
+  </script>
+</body>
+</html>

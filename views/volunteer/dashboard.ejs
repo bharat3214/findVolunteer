@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volunteer Dashboard - Volunteer Connect</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Volunteer Connect</h1>
+      <nav>
+        <ul>
+          <li><a href="/volunteer/dashboard" class="active">Dashboard</a></li>
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="dashboard">
+    <div class="container">
+      <div class="dashboard-header">
+        <h2>Welcome, <%= user.name %></h2>
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <h3><%= applications.length %></h3>
+            <p>Applications</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="dashboard-section">
+          <h3>Available Opportunities</h3>
+          <% if (opportunities.length === 0) { %>
+            <p class="empty-state">No opportunities available at the moment.</p>
+          <% } else { %>
+            <div class="opportunities-list">
+              <% opportunities.forEach(opportunity => { 
+                const hasApplied = user.applications.some(app => app._id.toString() === opportunity._id.toString());
+              %>
+                <div class="opportunity-card">
+                  <h4><%= opportunity.title %></h4>
+                  <p class="organization"><%= opportunity.organizationName %></p>
+                  <p class="description"><%= opportunity.description %></p>
+                  <div class="opportunity-details">
+                    <p><strong>Location:</strong> <%= opportunity.location || 'Remote' %></p>
+                    <% if (opportunity.startDate) { %>
+                      <p><strong>Start Date:</strong> <%= new Date(opportunity.startDate).toLocaleDateString() %></p>
+                    <% } %>
+                    <% if (opportunity.requirements && opportunity.requirements.length > 0) { %>
+                      <p><strong>Requirements:</strong> <%= opportunity.requirements.join(', ') %></p>
+                    <% } %>
+                  </div>
+                  <div class="opportunity-actions">
+                    <% if (hasApplied) { %>
+                      <button class="btn btn-secondary" disabled>Applied</button>
+                    <% } else { %>
+                      <form action="/volunteer/apply/<%= opportunity._id %>" method="POST">
+                        <button type="submit" class="btn btn-primary">Apply</button>
+                      </form>
+                    <% } %>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="dashboard-section">
+          <h3>My Applications</h3>
+          <% if (applications.length === 0) { %>
+            <p class="empty-state">You haven't applied to any opportunities yet.</p>
+          <% } else { %>
+            <div class="applications-list">
+              <% applications.forEach(application => { %>
+                <div class="application-card">
+                  <h4><%= application.title %></h4>
+                  <p class="organization"><%= application.organizationName %></p>
+                  <p class="description"><%= application.description %></p>
+                  <div class="application-details">
+                    <p><strong>Location:</strong> <%= application.location || 'Remote' %></p>
+                    <% if (application.startDate) { %>
+                      <p><strong>Start Date:</strong> <%= new Date(application.startDate).toLocaleDateString() %></p>
+                    <% } %>
+                  </div>
+                  <div class="application-status">
+                    <span class="status-badge status-pending">Applied</span>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 Volunteer Connect. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

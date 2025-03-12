@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Volunteer Connect</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Volunteer Connect</h1>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/login">Login</a></li>
+          <li><a href="/signup" class="active">Sign Up</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="form-section">
+    <div class="container">
+      <div class="form-container">
+        <h2>Create an Account</h2>
+        <% if (typeof error !== 'undefined') { %>
+          <div class="alert alert-error"><%= error %></div>
+        <% } %>
+        <form action="/signup" method="POST">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label>I am a:</label>
+            <div class="radio-group">
+              <label>
+                <input type="radio" name="role" value="volunteer" <%= (typeof role !== 'undefined' && role === 'volunteer') ? 'checked' : '' %> required> Volunteer
+              </label>
+              <label>
+                <input type="radio" name="role" value="organization" <%= (typeof role !== 'undefined' && role === 'organization') ? 'checked' : '' %>> Organization
+              </label>
+            </div>
+          </div>
+          
+          <div id="volunteer-fields" class="conditional-fields">
+            <div class="form-group">
+              <label for="skills">Skills (comma separated)</label>
+              <input type="text" id="skills" name="skills" placeholder="e.g. Teaching, Web Design, Event Planning">
+            </div>
+          </div>
+          
+          <div id="org-fields" class="conditional-fields">
+            <div class="form-group">
+              <label for="description">Organization Description</label>
+              <textarea id="description" name="description" rows="3"></textarea>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location">
+          </div>
+          
+          <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+        <p class="form-footer">Already have an account? <a href="/login">Login</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 Volunteer Connect. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Toggle fields based on role selection
+    const volunteerFields = document.getElementById('volunteer-fields');
+    const orgFields = document.getElementById('org-fields');
+    const roleRadios = document.querySelectorAll('input[name="role"]');
+    
+    function toggleFields() {
+      const role = document.querySelector('input[name="role"]:checked')?.value;
+      if (role === 'volunteer') {
+        volunteerFields.style.display = 'block';
+        orgFields.style.display = 'none';
+      } else if (role === 'organization') {
+        volunteerFields.style.display = 'none';
+        orgFields.style.display = 'block';
+      }
+    }
+    
+    roleRadios.forEach(radio => {
+      radio.addEventListener('change', toggleFields);
+    });
+    
+    // Initial toggle based on URL param
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const role = urlParams.get('role');
+      if (role === 'volunteer' || role === 'organization') {
+        document.querySelector(`input[name="role"][value="${role}"]`).checked = true;
+      }
+      toggleFields();
+    });
+  </script>
+</body>
+</html>

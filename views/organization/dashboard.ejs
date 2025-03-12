@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organization Dashboard - Volunteer Connect</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Volunteer Connect</h1>
+      <nav>
+        <ul>
+          <li><a href="/organization/dashboard" class="active">Dashboard</a></li>
+          <li><a href="/organization/create-opportunity">Create Opportunity</a></li>
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="dashboard">
+    <div class="container">
+      <div class="dashboard-header">
+        <h2>Welcome, <%= user.name %></h2>
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <h3><%= opportunities.length %></h3>
+            <p>Active Opportunities</p>
+          </div>
+          <div class="stat-card">
+            <h3><%= opportunities.reduce((total, opp) => total + (opp.applicants ? opp.applicants.length : 0), 0) %></h3>
+            <p>Total Applicants</p>
+          </div>
+        </div>
+        <a href="/organization/create-opportunity" class="btn btn-primary">Create New Opportunity</a>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="dashboard-section">
+          <h3>My Opportunities</h3>
+          <% if (opportunities.length === 0) { %>
+            <p class="empty-state">You haven't created any opportunities yet.</p>
+          <% } else { %>
+            <div class="opportunities-list">
+              <% opportunities.forEach(opportunity => { %>
+                <div class="opportunity-card">
+                  <h4><%= opportunity.title %></h4>
+                  <p class="description"><%= opportunity.description %></p>
+                  <div class="opportunity-details">
+                    <p><strong>Location:</strong> <%= opportunity.location || 'Remote' %></p>
+                    <% if (opportunity.startDate) { %>
+                      <p><strong>Start Date:</strong> <%= new Date(opportunity.startDate).toLocaleDateString() %></p>
+                    <% } %>
+                    <% if (opportunity.requirements && opportunity.requirements.length > 0) { %>
+                      <p><strong>Requirements:</strong> <%= opportunity.requirements.join(', ') %></p>
+                    <% } %>
+                  </div>
+                  <div class="opportunity-meta">
+                    <span class="applicant-count">
+                      <strong><%= opportunity.applicants ? opportunity.applicants.length : 0 %></strong> Applicants
+                    </span>
+                  </div>
+                  <div class="opportunity-actions">
+                    <a href="/organization/opportunity/<%= opportunity._id %>/applicants" class="btn btn-secondary">View Applicants</a>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2023 Volunteer Connect. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
