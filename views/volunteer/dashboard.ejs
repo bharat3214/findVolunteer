@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,6 +86,9 @@
                       <p><strong>Start Date:</strong> <%= new Date(application.startDate).toLocaleDateString() %></p>
                     <% } %>
                   </div>
+                  <div class="application-actions">
+                    <button onclick="cancelApplication('<%= application._id %>')" class="btn btn-danger">Cancel Application</button>
+                  </div>
                   <div class="application-status">
                     <span class="status-badge status-pending">Applied</span>
                   </div>
@@ -104,5 +106,26 @@
       <p>&copy; 2023 Volunteer Connect. All rights reserved.</p>
     </div>
   </footer>
+
+  <script>
+    async function cancelApplication(opportunityId) {
+      if (confirm('Are you sure you want to cancel this application?')) {
+        try {
+          const response = await fetch(`/volunteer/cancel-application/${opportunityId}`, {
+            method: 'DELETE'
+          });
+
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            alert('Failed to cancel application');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error canceling application');
+        }
+      }
+    }
+  </script>
 </body>
 </html>
