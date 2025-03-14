@@ -217,6 +217,33 @@ app.get('/volunteer/dashboard', authenticateUser, async (req, res) => {
   }
 });
 
+app.delete('/volunteer/cancel-application/:opportunityId', authenticateUser, async (req, res) => {
+  if (req.user.role !== 'volunteer') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const opportunityId = req.params.opportunityId;
+    
+    // Remove applicant from opportunity
+    await Opportunity.findByIdAndUpdate(
+      opportunityId,
+      { $pull: { applicants: req.user.id } }
+    );
+    
+    // Remove application from user
+    await User.findByIdAndUpdate(
+      req.user.id,
+      { $pull: { applications: opportunityId } }
+    );
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Cancel application error:', err);
+    res.status(500).json({ error: 'Cancel application error' });
+  }
+});
+
 app.post('/volunteer/apply/:opportunityId', authenticateUser, async (req, res) => {
   if (req.user.role !== 'volunteer') {
     return res.status(403).json({ error: 'Unauthorized' });
@@ -297,6 +324,34 @@ app.post('/organization/create-opportunity', authenticateUser, async (req, res) 
       user: req.user,
       error: 'Error creating opportunity'
     });
+  }
+});
+
+app.delete('/organization/opportunity/:id', authenticateUser, async (req, res) => {
+  if (req.user.role !== 'organization') {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const opportunity = await Opportunity.findById(req.params.id);
+    
+    if (!opportunity || opportunity.organizationId.toString() !== req.user.id) {
+      return res.status(404).json({ error: 'Opportunity not found' });
+    }
+    
+    // Remove opportunity references from all applicants
+    await User.updateMany(
+      { applications: opportunity._id },
+      { $pull: { applications: opportunity._id } }
+    );
+    
+    // Delete the opportunity
+    await Opportunity.findByIdAndDelete(req.params.id);
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting opportunity:', err);
+    res.status(500).json({ error: 'Error deleting opportunity' });
   }
 });
 
