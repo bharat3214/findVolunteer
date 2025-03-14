@@ -39,12 +39,13 @@ app.set('views', path.join(__dirname, 'views'));
 const User = mongoose.model('User', new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  organizationEmail: { type: String, required: function() { return this.role === 'organization'; }},
   password: { type: String, required: true },
   role: { type: String, enum: ['volunteer', 'organization'], required: true },
   skills: [String],
   description: String,
   location: String,
-  applications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Opportunity' }]
+  applications: [{ type: mongoose.Schema.Types: ObjectId, ref: 'Opportunity' }]
 }));
 
 const Opportunity = mongoose.model('Opportunity', new mongoose.Schema({

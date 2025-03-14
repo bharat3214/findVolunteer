@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -54,26 +53,31 @@
               </label>
             </div>
           </div>
-          
+
           <div id="volunteer-fields" class="conditional-fields">
             <div class="form-group">
               <label for="skills">Skills (comma separated)</label>
               <input type="text" id="skills" name="skills" value="<%= typeof formData !== 'undefined' ? formData.skills || '' : '' %>" placeholder="e.g. Teaching, Web Design, Event Planning">
             </div>
           </div>
-          
+
           <div id="org-fields" class="conditional-fields">
             <div class="form-group">
               <label for="description">Organization Description</label>
               <textarea id="description" name="description" rows="3"><%= typeof formData !== 'undefined' ? formData.description || '' : '' %></textarea>
             </div>
           </div>
-          
+
+          <div id="orgEmailField" style="display: none;" class="form-group">
+            <label for="organizationEmail">Organization Email</label>
+            <input type="email" name="organizationEmail" id="organizationEmail" class="form-control">
+          </div>
+
           <div class="form-group">
             <label for="location">Location</label>
             <input type="text" id="location" name="location" value="<%= typeof formData !== 'undefined' ? formData.location || '' : '' %>">
           </div>
-          
+
           <button type="submit" class="btn btn-primary">Sign Up</button>
         </form>
         <p class="form-footer">Already have an account? <a href="/login">Login</a></p>
@@ -92,7 +96,7 @@
     const volunteerFields = document.getElementById('volunteer-fields');
     const orgFields = document.getElementById('org-fields');
     const roleRadios = document.querySelectorAll('input[name="role"]');
-    
+
     function toggleFields() {
       const role = document.querySelector('input[name="role"]:checked')?.value;
       if (role === 'volunteer') {
@@ -103,11 +107,11 @@
         orgFields.style.display = 'block';
       }
     }
-    
+
     roleRadios.forEach(radio => {
       radio.addEventListener('change', toggleFields);
     });
-    
+
     // Initial toggle based on URL param
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -117,6 +121,21 @@
       }
       toggleFields();
     });
+
+
+    function toggleOrgEmail() {
+      const role = document.querySelector('input[name="role"]:checked').value;
+      const orgEmailField = document.getElementById('orgEmailField');
+      const orgEmailInput = document.getElementById('organizationEmail');
+      if (role === 'organization') {
+        orgEmailField.style.display = 'block';
+        orgEmailInput.required = true;
+      } else {
+        orgEmailField.style.display = 'none';
+        orgEmailInput.required = false;
+      }
+    }
+
   </script>
 </body>
 </html>
