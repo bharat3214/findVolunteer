@@ -45,7 +45,7 @@ const User = mongoose.model('User', new mongoose.Schema({
   skills: [String],
   description: String,
   location: String,
-  applications: [{ type: mongoose.Schema.Types: ObjectId, ref: 'Opportunity' }]
+  applications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Opportunity' }]
 }));
 
 const Opportunity = mongoose.model('Opportunity', new mongoose.Schema({
