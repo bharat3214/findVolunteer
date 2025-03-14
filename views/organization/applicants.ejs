@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,8 +81,7 @@
                   <% } %>
                 </div>
                 <div class="applicant-actions">
-                  <span class="status-badge status-pending">Pending</span>
-                  <a href="mailto:<%= applicant.email %>?subject=Selected for <%= opportunity.title %>&body=Dear <%= applicant.name %>, %0D%0A%0D%0AWe are pleased to inform you that you have been selected for the volunteer opportunity: <%= opportunity.title %>. %0D%0A%0D%0AWe look forward to working with you!%0D%0A%0D%0ABest regards,%0D%0A<%= user.name %>" class="btn btn-primary">Contact</a>
+                  <button class="btn btn-primary contact-btn" data-email="<%= applicant.email %>">Contact</button>
                 </div>
               </div>
             <% }); %>
@@ -97,5 +97,14 @@
     </div>
   </footer>
 
+  <script>
+    // Simple contact functionality
+    document.querySelectorAll('.contact-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const email = this.getAttribute('data-email');
+        window.location.href = `mailto:${email}?subject=Regarding your volunteer application`;
+      });
+    });
+  </script>
 </body>
 </html>
